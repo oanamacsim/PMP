@@ -30,3 +30,8 @@ with pm.Model() as model_g:
 
 idata_g = pm.sample(400, tune=400, return_inferencedata=True)
 az.plot_trace(idata_g, var_names=["α", "β", "ε"])
+
+az.plot_posterior(
+         { "beta_1": trace['beta_1'], "beta_2": trace['beta_2']},
+         hdi_prob=0.95)
+plt.savefig("beta_1beta_2.png")
