@@ -2,37 +2,42 @@ import matplotlib.pyplot as plt
 import arviz as az
 import pandas as pd
 
+centered_data = az.load_arviz_data("centered_eight")
+non_centered_data = az.load_arviz_data("non_centered_eight")
 
-centered = az.load_arviz_data("centered_eight")
-non_centered = az.load_arviz_data("non_centered_eight")
+#Ex1
+centered_posterior_data = centered_data['posterior']
 
+print(centered_posterior_data)
 
-#Exercitiul 1
-print(centered['posterior'])
-info= az.plot_trace(centered, divergences='top', compact=False)
-print(non_centered['posterior'])
-info = az.plot_trace(non_centered, divergences='top', compact=False)
+graph= az.plot_trace(centered_data, divergences='top', compact=False)
 
+non_centered_posterior_data = non_centered_data['posterior']
 
-#Exercitiul 2
-Rhat1 = az.rhat(centered, var_names=["mu", "theta"])
-Rhat2 = az.rhat(non_centered, var_names=["mu", "theta"])
+print(non_centered_posterior_data)
 
-print(Rhat1)
-print(Rhat2)
+graph = az.plot_trace(non_centered_data, divergences='top', compact=False)
 
 
-#Exercitiul 3
-centered.sample_stats.diverging.sum()
-non_centered.sample_stats.diverging.sum()
+#Ex2
+rhat_value1 = az.rhat(centered_data, var_names=["mu", "theta"])
+rhat_value2 = az.rhat(non_centered_data, var_names=["mu", "theta"])
 
-_, ax = plt.subplots(1, 2, sharey=True, sharex=True, figsize=(10, 5), constrained_layout=True)
+print(rhat_value1)
+print(rhat_value2)
 
-for idx, tr in enumerate([centered, non_centered]):
+
+#Ex3
+centered_data.sample_stats.diverging.sum()
+non_centered_data.sample_stats.diverging.sum()
+
+_, ax = plt.subplots(1, 2, sharey=True, sharex=True, figsize=(15, 10), constrained_layout=True)
+
+for index, tr in enumerate([centered_data, non_centered_data]):
     az.plot_pair(tr, var_names=['mu', 'tau'], kind='scatter',
                  divergences=True, divergences_kwargs={'color':'C1'},
-                 ax=ax[idx])
+                 ax=ax[index])
 
-    ax[idx].set_title(['centered', 'non-centered'][idx])
+    ax[index].set_title(['centered', 'non-centered'][index])
 
 plt.show()
